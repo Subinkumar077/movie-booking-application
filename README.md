@@ -1,5 +1,9 @@
 # ReelReserve - Movie Booking Application
 
+## Project Demo
+
+Watch the project demonstration on [YouTube](https://youtu.be/B8ySNtpaGPQ).
+
 ReelReserve is a full-stack movie ticket booking platform. It combines a Spring Boot REST API with a React/Vite frontend for movie discovery, showtime selection, seat booking, booking history, and administrator management.
 
 ## Features
