@@ -3,8 +3,10 @@ package com.example.MoviesBookingApplication.service;
 import com.example.MoviesBookingApplication.DTO.MovieDTO;
 import com.example.MoviesBookingApplication.Entity.Movie;
 import com.example.MoviesBookingApplication.repository.MovieRepository;
+import com.example.MoviesBookingApplication.repository.ShowRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +16,9 @@ public class MovieService {
 
     @Autowired
     private MovieRepository movieRepository;
+
+    @Autowired
+    private ShowRepository showRepository;
 
     public Movie addMovie(MovieDTO movieDTO) {
         Movie movie = new Movie();
@@ -75,12 +80,18 @@ public class MovieService {
     }
 
 
+    @Transactional
     public void deleteMovie(Long id) {
 
         Movie movie = movieRepository.findById(id)
                 .orElseThrow(() ->
                         new RuntimeException("Movie not found with ID: " + id));
 
+        var shows = showRepository.findByMovieId(id).orElse(List.of());
+        if (shows.stream().anyMatch(show -> show.getBookings() != null && !show.getBookings().isEmpty())) {
+            throw new RuntimeException("Cannot delete movie with existing bookings");
+        }
+        showRepository.deleteAll(shows);
         movieRepository.delete(movie);
     }
 }
